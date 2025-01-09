@@ -7,12 +7,21 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './app/router/Routes.tsx';
+// import { configureTheStore } from './app/store/store.ts';
+import { Provider } from 'react-redux';
+import { store } from './app/store/store.ts';
 
-const root = createRoot(
-  document.getElementById('root') as HTMLElement
-);
-root.render(
+// const store = configureTheStore();
+
+// console.log(store.getState());//get state from redux store
+
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+    {/* <RouterProvider router={router} future={{ v7_startTransition: true}}/> */}
+    <RouterProvider router={router}/>
+    </Provider>
+
   </StrictMode>,
 )
+

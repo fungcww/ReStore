@@ -9,7 +9,7 @@ namespace API.controller
 {
     public class BuggyController : BaseApiController
     {
-        [HttpGet("not-found")]
+        [HttpGet("not-found!!!")]
         public ActionResult GetNotFound()
         {
             return NotFound();
