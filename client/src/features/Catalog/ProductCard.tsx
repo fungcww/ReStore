@@ -13,6 +13,8 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import agent from "../../app/api/agent";
 import {LoadingButton} from "@mui/lab"
+import { useAddBasketItemMutation } from "../basket/basketApi";
+import { currencyFormat } from "../../lib/util";
 // const theme = createTheme({
 //     palette: {
 //       primary: {
@@ -28,6 +30,7 @@ interface Props {
   product: Product;
 }
 export default function ProductCard({ product }: Props) {
+  const [addbasketItem, {isLoading}] = useAddBasketItemMutation();
   const [loading, setLoading] = useState(false);
 
   function handleAddItem(productId: number){
@@ -52,7 +55,7 @@ export default function ProductCard({ product }: Props) {
       />
       <CardContent>
         <Typography gutterBottom color="secondary" variant="h5">
-          ${(product.price/100).toFixed(2)}
+          {currencyFormat(product.price)}
         </Typography>
         <Typography variant="body2" sx={{ color: "text.secondary" }}>
           {product.brand} / {product.type}
@@ -61,8 +64,11 @@ export default function ProductCard({ product }: Props) {
       <CardActions>
         <LoadingButton 
             loading={loading} 
-            onClick={() => handleAddItem(product.id)}
-            size="small">Add to cart</LoadingButton>
+            //onClick={() => handleAddItem(product.id)}
+            size="small"></LoadingButton>
+        <Button 
+          disabled = {isLoading}
+          onClick={() => addbasketItem({product, quantity: 1})}>Add to cart</Button>
         <Button component={Link} to={`/catalog/${product.id}`} size="small">View</Button>
       </CardActions>
     </Card>

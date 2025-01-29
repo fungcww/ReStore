@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Extentions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,7 +30,8 @@ namespace API.controller
             {
                 return NotFound();
             }
-            return MapBasketToDto(basket);
+            return basket.ToDto();
+            //return MapBasketToDto(basket);
         }
 
         [HttpPost] // api/basket?productId=3&quantity=2 -> how data come from frontend
@@ -56,7 +58,7 @@ namespace API.controller
         {
             //get basket
             var basket = await RetrieveBasket();
-            if(basket == null)  return NotFound();
+            if(basket == null)  return BadRequest("Unable to retrieve basket");
             //remove item ro reduce quantity
             basket.RemoveItem(productId, quantity);
             //save changes
@@ -85,7 +87,7 @@ namespace API.controller
         {
             return new BasketDto
             {
-                Id = basket.Id,
+                BasketId = basket.Id,
                 BuyerId = basket.BuyerId,
                 Items = basket.Items.Select(item => new BasketItemDto
                 {

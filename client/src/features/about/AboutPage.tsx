@@ -1,38 +1,59 @@
 import { Alert, AlertTitle, Button, ButtonGroup, Container, List, ListItem, ListItemText, Typography } from "@mui/material";
 import agent from "../../app/api/agent";
 import { useState } from "react";
+import { useLazyGet400ErrorQuery, useLazyGet401ErrorQuery, useLazyGet404ErrorQuery, useLazyGet500ErrorQuery, useLazyGetValidationErrorQuery } from "./errorApi";
 
 export default function AboutPage(){
-    const [validationErrors, setValidationErrors] = useState<string[]>([]);
+    const [validationErrors, setValidationErrors] = useState<string []>([]);
 
-    function getValidationError() {
-        agent.TestErrors.getValidationError()
-        .then(() => console.log('should not see this'))
-        .catch(error => setValidationErrors(error))
+    const [trigger400Error] = useLazyGet400ErrorQuery();
+    const [trigger401Error] = useLazyGet401ErrorQuery();
+    const [trigger404Error] = useLazyGet404ErrorQuery();
+    const [trigger500Error] = useLazyGet500ErrorQuery();
+    const [triggerValidationError] = useLazyGetValidationErrorQuery();
+
+    const getValidationError = async () => {
+        try {
+            await triggerValidationError().unwrap();
+        } catch (error: unknown){
+            if(error && typeof error === 'object' && 'message' in error 
+                && typeof (error as {message: unknown}).message === 'string') {
+                    const errorArray = (error as {message: string}).message.split(', ')
+                    setValidationErrors(errorArray);
+                    console.log(errorArray);
+                }
+        }
     }
+    //const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-    return (
-        <Container>
+    // function getValidationError() {
+    //     agent.TestErrors.getValidationError()
+    //     .then(() => console.log('should not see this'))
+    //     .catch(error => setValidationErrors(error))
+    // }
+
+    return (        <Container>
             <Typography gutterBottom variant="h2">Errors for testing purposes</Typography>
             <ButtonGroup fullWidth>
-                <Button variant="contained" onClick={() => agent.TestErrors.get400Error().catch(error => console.log(error))}>Test 400 error</Button>
-                <Button variant="contained" onClick={() => agent.TestErrors.get401Error().catch(error => console.log(error))}>Test 401 error</Button>
-                <Button variant="contained" onClick={() => agent.TestErrors.get404Error().catch(error => console.log(error))}>Test 404 error</Button>
-                <Button variant="contained" onClick={() => agent.TestErrors.get500Error().catch(error => console.log(error))}>Test 500 error</Button>
-                <Button variant="contained" onClick={getValidationError}>Test validation error</Button>
+                <Button variant="contained" onClick={() => trigger400Error()
+                    .unwrap()
+                    .catch(err => console.log(err))}>Test 400 error</Button>
+                <Button variant="contained" onClick={() => trigger401Error().catch(err => console.log(err))}>Test 401 error</Button>
+                <Button variant="contained" onClick={() => trigger404Error().catch(err => console.log(err))}>Test 404 error</Button>
+                <Button variant="contained" onClick={() => trigger500Error().catch(err => console.log(err))}>Test 500 error</Button>
+                <Button variant="contained" onClick={getValidationError}>Test Validation error</Button>
+                {/* <Button variant="contained" onClick={() => agent.TestErrors.get500Error().catch(error => console.log(error))}>Test 500 error</Button> */}
             </ButtonGroup>
-            {validationErrors.length > 0 && 
-                <Alert severity="error">
-                    <AlertTitle>Validation Errors</AlertTitle>
+            {validationErrors.length > 0 && (
+                <Alert severity = "error">
+                    <AlertTitle>Validation errors</AlertTitle>
                     <List>
-                        {validationErrors.map(error => (
-                            <ListItem key={error}>
-                                <ListItemText>{error}</ListItemText>
-                            </ListItem>
+                        {validationErrors.map(err => (
+                            <ListItem key={err}>{err}</ListItem>
                         ))}
                     </List>
                 </Alert>
-            }
+            )}
         </Container>
     )
 }

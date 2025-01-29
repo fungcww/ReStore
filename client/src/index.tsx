@@ -10,6 +10,8 @@ import { router } from './app/router/Routes.tsx';
 // import { configureTheStore } from './app/store/store.ts';
 import { Provider } from 'react-redux';
 import { store } from './app/store/store.ts';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/ReactToastify.css';
 
 // const store = configureTheStore();
 
@@ -18,8 +20,9 @@ import { store } from './app/store/store.ts';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
+      <ToastContainer position='bottom-right' hideProgressBar theme='colored'/>
     {/* <RouterProvider router={router} future={{ v7_startTransition: true}}/> */}
-    <RouterProvider router={router}/>
+      <RouterProvider router={router}/>
     </Provider>
 
   </StrictMode>,

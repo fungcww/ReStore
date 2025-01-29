@@ -1,4 +1,15 @@
-interface BasketItem {
+import { Product } from "./product";
+
+export class Item {
+  constructor(product: Product, quantity: number){
+    this.productId = product.id
+    this.name = product.name;
+    this.price = product.price;
+    this.pictureUrl = product.pictureUrl;
+    this.brand = product.brand;
+    this.type = product.type;
+    this.quantity = quantity;
+  }
     productId: number;
     name: string;
     price: number;
@@ -10,5 +21,5 @@ interface BasketItem {
   export interface Basket {
     id: number;
     buyerId: string;
-    items: BasketItem[];
+    items: Item[];
   }

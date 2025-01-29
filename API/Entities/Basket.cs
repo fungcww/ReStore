@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 
 namespace API.Entities
@@ -15,18 +16,37 @@ namespace API.Entities
         {
             if(Items.All(item => item.ProductId != product.Id))
             {
-                Items.Add(new BasketItem{Product = product, Quantity = quantity});
+                if (product == null) ArgumentNullException.ThrowIfNull(product);
+                if(quantity <= 0) throw new ArgumentException("Quauntitty should be greater thhan zero", nameof(quantity));
             }
 
-            var existingItem = Items.FirstOrDefault(item => item.ProductId == product.Id);
-            if (existingItem != null) existingItem.Quantity += quantity;
+            var existingItem = FindItem(product.Id);
+            if(existingItem == null)
+            {
+                Items.Add(new BasketItem
+                {
+                    Product = product, 
+                    Quantity = quantity
+                });
+            }
+            else
+            {
+                existingItem.Quantity += quantity;
+            }
+        }
+        public BasketItem? FindItem(int productId)
+        {
+            return Items.FirstOrDefault(item => item.ProductId == productId);
         }
         public void RemoveItem(int productId, int quantity)
         {
-            var item = Items.FirstOrDefault(item => item.ProductId == productId);
+            if(quantity <= 0) throw new ArgumentException("Quantity should be greater than zero",
+            nameof(quantity));
+
+            var item = FindItem(productId);
             if(item == null) return;
             item.Quantity -= quantity;
-            if(item.Quantity == 0) Items.Remove(item);
+            if(item.Quantity <=  0) Items.Remove(item);
         }
     }
 }

@@ -10,16 +10,25 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddCors();
 builder.Services.AddDbContext<StoreContext>(opt => 
 {
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddCors();
+
+builder.Services.AddTransient<ExceptionMiddleware>();
 
 var app = builder.Build();
-app.UseMiddleware<ExceptionMiddleware>();
 
+//app.UseMiddleware<ExceptionMiddleware>();
+app.UseCors(opt =>
+{
+    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000");
+});
 // Configure the HTTP request pipeline.
+app.MapControllers();
+DbInitializer.InitDb(app);
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -31,18 +40,14 @@ if (app.Environment.IsDevelopment())
 var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-try
-{
-    context.Database.Migrate();
-    DbInitializer.Initialize(context);
-}
-catch(Exception ex)
-{
-    logger.LogError(ex, "Error in your face ~ ");
-}
-app.UseCors(opt =>
-{
-    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000");
-});
+// try
+// {
+//     context.Database.Migrate();
+//     DbInitializer.Initialize(context);
+// }
+// catch(Exception ex)
+// {
+//     logger.LogError(ex, "Error in your face ~ ");
+// }
 app.Run();
 }

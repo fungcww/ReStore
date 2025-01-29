@@ -1,11 +1,25 @@
 using API.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
 {
     public static class DbInitializer
     {
-         public static void Initialize(StoreContext context)
-         {
+        public static void InitDb(WebApplication app)
+        {
+            using var scope = app.Services.CreateScope(); //with using statement, no need to take care of the garbage collection -> clean up unused resources
+
+            var context = scope.ServiceProvider.GetRequiredService<StoreContext>()
+                ?? throw new InvalidOperationException("Failed to retrieve  store context");
+
+                SeedData(context);
+
+        }
+        
+        private static void SeedData(StoreContext context)
+        {
+            context.Database.Migrate();
+
             if(context.Products.Any()) return;
 
             var products = new List<Product>
@@ -205,6 +219,15 @@ namespace API.Data
                     Type = "Boots",
                     QuantityInStock = 100
                 }
+            };
+        }
+         public static void Initialize(StoreContext context)
+         {
+            if(context.Products.Any()) return;
+
+            var products = new List<Product>
+            {
+            
             };
 
             context.Products.AddRange(products);

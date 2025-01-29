@@ -17,6 +17,7 @@ import agent from "../api/agent";
 import { Basket } from "../models/basket";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { setDarkMode } from "./uiSlice";
+import { useFetchBasketQuery } from "../../features/basket/basketApi";
 
 const midLinks = [
   { title: "catalog", path: "/catalog" },
@@ -44,10 +45,13 @@ export default function Header() {
     const {isLoading, darkMode} = useAppSelector(state => state.ui)
     const dispatch = useAppDispatch();
     //const [isLoading, setLoading] = useState();
-    const [basket, setBasket] = useState<Basket | null>(null);
+    //const [basket, setBasket] = useState<Basket | null>(null);
+    const {data: basket} = useFetchBasketQuery();
+    const itemCount = basket?.items.reduce((sum, item) => sum + item.quantity, 0) || 0; //qty, 0 -> initial value
+    //.reduce -> This array method to for each element of the items array
   useEffect(() => {
     agent.Basket.get()
-    .then(basket => setBasket(basket))
+    //.then(basket => setBasket(basket))
     .catch(error => console.log(error))
     //.finally(() => setLoading(false))
 }, [])
@@ -75,7 +79,7 @@ export default function Header() {
 
         <Box display='flex' alignItems='center'>
         <IconButton component={Link} to='/basket' size="large" edge="start" color="inherit" sx={{ mr: 2 }}>
-          <Badge badgeContent={basket?.items.length || 0} color="secondary">
+          <Badge badgeContent={itemCount} color="secondary">
             <ShoppingCart />
           </Badge>
         </IconButton>
