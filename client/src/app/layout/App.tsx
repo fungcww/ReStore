@@ -1,6 +1,6 @@
 import { Container, createTheme, CssBaseline, ThemeProvider} from "@mui/material";
 import Header from "./Header";
-import { Outlet } from "react-router-dom";
+import { Outlet, ScrollRestoration } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/ReactToastify.css'
 import { useAppSelector } from "../store/store";
@@ -26,6 +26,7 @@ function App() {
 
   return (
       <ThemeProvider theme={theme}> 
+      <ScrollRestoration/>
         <ToastContainer position="bottom-right" hideProgressBar theme="colored" />
         <CssBaseline/>
         <Header/>

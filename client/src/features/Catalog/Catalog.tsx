@@ -1,5 +1,10 @@
 import ProductList from "./ProductList";
-import { useFetchProductsQuery } from "./CatalogApi";
+import { useFetchFiltersQuery, useFetchProductsQuery } from "./CatalogApi";
+import { Grid2, Pagination, Typography } from "@mui/material";
+import Filters from "./Filters";
+import { useAppDispatch, useAppSelector } from "../../app/store/store";
+import AppPagination from "../../app/shared/components/AppPagination";
+import { setPageNumber } from "./catalogSlice";
 
 // interface Props{
 //   products: Product[];
@@ -7,14 +12,37 @@ import { useFetchProductsQuery } from "./CatalogApi";
 // }
 
 export default function Catalog() {
-const {data, isLoading} = useFetchProductsQuery();
+const productParams = useAppSelector(state => state.catalog);
+const {data, isLoading} = useFetchProductsQuery(productParams);
+const {data: filtersData, isLoading: filtersLoading} = useFetchFiltersQuery();
+const dispatch = useAppDispatch();
 
-if(isLoading || !data) return <div>Loading...</div>
+if(isLoading || !data || filtersLoading || !filtersData) return <div>Loading...</div>
 
 return (
-  <>
-    <ProductList products={data}/>
-  </>
+  //add filtered data to Filters to avoid second loading 
+  <Grid2 container spacing={4}>
+    <Grid2 size={3}>
+      <Filters filtersData={filtersData}/>
+    </Grid2>
+    <Grid2 size={9}>
+    {data.items && data.items.length > 0 ? (
+        <>
+        <AppPagination
+          metadata={data.pagination}
+          onPageChange={(page: number) => {
+            dispatch(setPageNumber(page));
+            window.scrollTo({top: 0, behavior:'smooth'})
+          }}
+        />
+        </>
+    ) : (
+      <Typography variant="h5">No results found!</Typography>
+    )
+    }
+    <ProductList products={data.items}/>
+    </Grid2>
+  </Grid2>
 );
 }
 
