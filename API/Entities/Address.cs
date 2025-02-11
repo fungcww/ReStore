@@ -14,6 +14,7 @@ public class Address
     public required string City { get; set; }
     public required string State { get; set; }
     [JsonPropertyName("postal_code")]
+    //json serialization property name is case sensitive
     public string Postalcode { get; set; }
     public string Country { get; set; }
 }
