@@ -1,4 +1,6 @@
+using System.Threading.Tasks;
 using API.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
@@ -12,13 +14,34 @@ namespace API.Data
             var context = scope.ServiceProvider.GetRequiredService<StoreContext>()
                 ?? throw new InvalidOperationException("Failed to retrieve  store context");
 
-                SeedData(context);
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>()
+                ?? throw new InvalidOperationException("Failed to retrieve User Manager");
+                SeedData(context, userManager).Wait();
 
         }
         
-        private static void SeedData(StoreContext context)
+        private static async Task SeedData(StoreContext context, UserManager<User> userManager)
         {
             context.Database.Migrate();
+
+            if (!userManager.Users.Any())
+            {
+                var user = new User
+                {
+                    UserName = "wai@test.com",
+                    Email = "wai@test.com"
+                };
+                await userManager.CreateAsync(user, "Pa$$w0rd");
+                await userManager.AddToRoleAsync(user, "Member");
+
+                var admin = new User
+                {
+                    UserName = "admin@test.com",
+                    Email = "admin@test.com"
+                };
+                await userManager.CreateAsync(admin, "Pa$$w0rd");
+                await userManager.AddToRolesAsync(admin, ["Admin", "Member"]);
+            };
 
             if(context.Products.Any()) return;
 
@@ -221,21 +244,21 @@ namespace API.Data
                 }
             };
         }
-         public static void Initialize(StoreContext context)
-         {
-            if(context.Products.Any()) return;
+        //  public static void Initialize(StoreContext context)
+        //  {
+        //     if(context.Products.Any()) return;
 
-            var products = new List<Product>
-            {
+        //     var products = new List<Product>
+        //     {
             
-            };
+        //     };
 
-            context.Products.AddRange(products);
-            // foreach (var product in products)
-            // {
-            //     context.Products.Add(product);
-            // }
-            context.SaveChanges();
-         }
+        //     context.Products.AddRange(products);
+        //     // foreach (var product in products)
+        //     // {
+        //     //     context.Products.Add(product);
+        //     // }
+        //     context.SaveChanges();
+        //  }
     }
 } 

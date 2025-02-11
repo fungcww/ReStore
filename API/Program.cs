@@ -1,5 +1,7 @@
 using API.Data;
+using API.Entities;
 using API.Middleware;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +19,12 @@ builder.Services.AddDbContext<StoreContext>(opt =>
 builder.Services.AddCors();
 
 builder.Services.AddTransient<ExceptionMiddleware>();
+builder.Services.AddIdentityApiEndpoints<User>(opt =>
+{
+    opt.User.RequireUniqueEmail = true;
+})
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<StoreContext>();
 
 var app = builder.Build();
 
@@ -26,15 +34,20 @@ app.UseCors(opt =>
     opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000");
 });
 // Configure the HTTP request pipeline.
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
+app.MapGroup("api").MapIdentityApi<User>();
 DbInitializer.InitDb(app);
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseAuthorization();
-    app.MapControllers();
+    //app.UseAuthorization();
+    //app.MapControllers();
 
 //app.UseHttpsRedirection();
 var scope = app.Services.CreateScope();
@@ -49,5 +62,6 @@ var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 // {
 //     logger.LogError(ex, "Error in your face ~ ");
 // }
-app.Run();
+//app.Run();
 }
+app.Run();
