@@ -12,12 +12,13 @@ import {
 } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import { Link, NavLink } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import agent from "../api/agent";
-import { Basket } from "../models/basket";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { setDarkMode } from "./uiSlice";
 import { useFetchBasketQuery } from "../../features/basket/basketApi";
+import { useUserInfoQuery } from "../../features/account/accountApi";
+import UserMenu from "./UserMenu";
 
 const midLinks = [
   { title: "catalog", path: "/catalog" },
@@ -42,6 +43,8 @@ const navStyle = { color: "inherit",
 
 
 export default function Header() {
+  //const user =  {email: 'test@test.com', roles: []}
+  const {data: user} = useUserInfoQuery();
     const {isLoading, darkMode} = useAppSelector(state => state.ui)
     const dispatch = useAppDispatch();
     //const [isLoading, setLoading] = useState();
@@ -83,7 +86,25 @@ export default function Header() {
             <ShoppingCart />
           </Badge>
         </IconButton>
-        <List sx={{ display: "flex" }}>
+
+        {user ? (
+          <UserMenu user={user}/>
+        ) : (
+          <List sx={{ display: "flex" }}>
+            {rightLinks.map(({ title, path }) => (
+            <ListItem
+              component={NavLink}
+              to={path}
+              key={path}
+              sx={navStyle}
+            >
+              {title.toLocaleUpperCase()}
+            </ListItem>
+          ))}
+          </List>
+        )}
+
+        {/* <List sx={{ display: "flex" }}>
           {rightLinks.map(({ title, path }) => (
             <ListItem
               component={NavLink}
@@ -94,7 +115,7 @@ export default function Header() {
               {title.toLocaleUpperCase()}
             </ListItem>
           ))}
-        </List>
+        </List> */}
         </Box>
       </Toolbar>
       {isLoading && (

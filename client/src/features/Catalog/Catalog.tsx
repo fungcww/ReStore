@@ -1,6 +1,6 @@
 import ProductList from "./ProductList";
 import { useFetchFiltersQuery, useFetchProductsQuery } from "./CatalogApi";
-import { Grid2, Pagination, Typography } from "@mui/material";
+import { Grid2, Typography } from "@mui/material";
 import Filters from "./Filters";
 import { useAppDispatch, useAppSelector } from "../../app/store/store";
 import AppPagination from "../../app/shared/components/AppPagination";

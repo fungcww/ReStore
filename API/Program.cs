@@ -25,7 +25,7 @@ builder.Services.AddIdentityApiEndpoints<User>(opt =>
 })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<StoreContext>();
-
+    
 var app = builder.Build();
 
 //app.UseMiddleware<ExceptionMiddleware>();
@@ -34,12 +34,14 @@ app.UseCors(opt =>
     opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000");
 });
 // Configure the HTTP request pipeline.
+//app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 app.MapGroup("api").MapIdentityApi<User>();
+
 DbInitializer.InitDb(app);
 
 if (app.Environment.IsDevelopment())
