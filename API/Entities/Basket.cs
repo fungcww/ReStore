@@ -11,7 +11,13 @@ namespace API.Entities
         public int Id {get; set;}
         public string BuyerId {get; set;}
         public List<BasketItem> Items {get;set;} = new();
-
+        public string? ClientSecret {get; set;}
+        //after sending payment to stripe, we will get a client secret
+        //this client secret will be used to confirm the payment
+        public string? PaymentIntentId {get; set;}
+        //this is the id of the payment intent that we will create in stripe
+        //this will be used to track the payment intent
+        //when user make some updates to the basket, we will need to update the payment intent
         public void AddItem(Product product, int quantity)
         {
             if(Items.All(item => item.ProductId != product.Id))

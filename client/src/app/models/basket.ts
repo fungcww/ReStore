@@ -22,4 +22,6 @@ export class Item {
     id: number;
     buyerId: string;
     items: Item[];
+    clientSecret?: string;
+    paymentIntentId?: string;
   }

@@ -140,7 +140,7 @@ namespace API.controller
             await _signInManager.SignOutAsync();
             return NoContent();
         }
-        [Authorize]
+        //[Authorize]
         [HttpPost("address")]
         public async Task<ActionResult> AddAddress(Address address)
         {
@@ -160,7 +160,7 @@ namespace API.controller
             }
             return Ok(user.Address);
         }
-        [Authorize]
+        //[Authorize]
         [HttpGet("address")]
         public async Task<ActionResult<Address>> GetSavedAddress()
         {
@@ -171,7 +171,14 @@ namespace API.controller
 
             if (address == null)
             {
-                return NoContent();
+                var newAddress = new Address
+                {
+                    Name = string.Empty,
+                    Line1 = string.Empty,
+                    City = string.Empty,
+                    State = string.Empty
+                };
+                return newAddress;
             }
             return address;
         }

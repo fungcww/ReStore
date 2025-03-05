@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { router } from "../router/Routes";
 
 const customBaseQuery = fetchBaseQuery({
-    baseUrl: 'http://localhost:5014/api', //include the buyer's cookies for every api call
+    baseUrl: import.meta.env.VITE_API_URL, //include the buyer's cookies for every api call
     credentials: 'include' //include the cookies in each request
 });
 
