@@ -1,7 +1,5 @@
-import { CheckBox } from "@mui/icons-material"
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material"
 import { useEffect, useState } from "react";
-import { data } from "react-router-dom"
 
 type Props = {
     items: string[];

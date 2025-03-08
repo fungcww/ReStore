@@ -4,7 +4,7 @@ import { router } from "../router/Routes";
 
 const sleep = () => new Promise(resolve => setTimeout(resolve, 300));
 
-axios.defaults.baseURL = 'http://localhost:5014/api/';
+axios.defaults.baseURL = 'https://localhost:5014/api/';
 axios.defaults.withCredentials = true;//for saving the cookies
 
 const responseBody = (response: AxiosResponse) => response.data;
@@ -49,7 +49,7 @@ axios.interceptors.response.use(async response => {
 const requests = {
     get: (url: string) => axios.get(url).then(responseBody),
     post: (url: string, body: object) => axios.post(url, body).then(responseBody),
-    put: (url: string, body: object) => axios.put(url).then(responseBody),
+    put: (url: string, body: object) => axios.put(url, body).then(responseBody),
     delete: (url: string) => axios.delete(url).then(responseBody),
 }
 

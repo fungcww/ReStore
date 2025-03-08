@@ -11,7 +11,7 @@ import BasketPage from "../../features/basket/BasketPage";
 import CheckoutPage from "../../features/checkout/CheckoutPage";
 import LoginForm from "../../features/account/LoginForm";
 import RegisterForm from "../../features/account/RegisterForm";
-import RequireAuth from "./requireAuth";
+import RequireAuth from "./RequireAuth";
 import CheckoutSuccess from "../../features/checkout/CheckoutSuccess";
 
 export const router = createBrowserRouter([

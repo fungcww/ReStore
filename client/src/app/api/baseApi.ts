@@ -1,4 +1,4 @@
-import { fetchBaseQuery } from "@reduxjs/toolkit/query";
+import { BaseQueryApi, FetchArgs, fetchBaseQuery } from "@reduxjs/toolkit/query";
 import { startLoading, stopLoading } from "../layout/uiSlice";
 import { toast } from "react-toastify";
 import { router } from "../router/Routes";
@@ -15,7 +15,7 @@ const sleep = () => new Promise(resolve => setTimeout(resolve, 1000));
  export const baseQueryWithErrorHandling = async (args: string | FetchArgs, api: BaseQueryApi,
     extraOptions: object) => {
         api.dispatch(startLoading());
-        await sleep();
+        if(import.meta.env.DEV) await sleep();
         const result = await customBaseQuery(args, api, extraOptions);
         //stop loading
         api.dispatch(stopLoading());
@@ -36,7 +36,9 @@ const sleep = () => new Promise(resolve => setTimeout(resolve, 1000));
                         throw Object.values(responseData.errors).flat().join('@, ');
                     }
                     else toast.error(responseData.title);
-                    throw Object.values(responseData.title).flat().join('');
+                    if (typeof responseData === 'object' && 'title' in responseData) {
+                        throw Object.values(responseData.title).flat().join('');
+                    }
                     break;
                 case 401:
                     if (typeof responseData === 'object' && 'title' in responseData) 

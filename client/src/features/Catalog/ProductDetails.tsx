@@ -1,9 +1,7 @@
 import {
   Button,
   Divider,
-  Grid,
   Grid2,
-  Tab,
   Table,
   TableBody,
   TableCell,
@@ -16,8 +14,7 @@ import { useParams } from "react-router-dom";
 import NotFound from "../../app/errors/NotFound";
 import { useFetchProductDetailsQuery } from "./CatalogApi";
 import { useAddBasketItemMutation, useFetchBasketQuery, useRemoveBasketItemMutation } from "../basket/basketApi";
-import { ChangeEvent, ChangeEventHandler, useEffect, useState } from "react";
-import { Iron } from "@mui/icons-material";
+import { ChangeEvent, useEffect, useState } from "react";
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();

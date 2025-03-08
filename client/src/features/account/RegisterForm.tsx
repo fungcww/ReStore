@@ -1,11 +1,10 @@
 import { useForm } from 'react-hook-form';
 import { useRegisterMutation } from './accountApi';
-import { registerSchema, RegisterSchema } from '../../lib/schemas/registerSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LockOutlined } from '@mui/icons-material';
 import { Container, Paper, Box, Typography, TextField, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { set } from 'zod';
+import { RegisterSchema, registerSchema } from '../../lib/schemas/RegisterSchema';
 
 export default function RegisterForm() {
     const [registerUser] = useRegisterMutation();

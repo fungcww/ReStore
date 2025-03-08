@@ -13,7 +13,7 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK);
 
 export default function CheckoutPage() {
   const { data: basket } = useFetchBasketQuery(); //extract the basket data property from the useFetchBasketQuery hook
-  const [createPaymentIntent, { isLoading }] = useCreatePaymentIntentMutation();
+  const [createPaymentIntent] = useCreatePaymentIntentMutation();
   const create = useRef(false); // -> persistant value that does not trigger a re-render
   const {darkMode} = useAppSelector(state => state.ui);
   //useRef returns a mutable object that persists for the lifetime of the component

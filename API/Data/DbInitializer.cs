@@ -7,7 +7,7 @@ namespace API.Data
 {
     public static class DbInitializer
     {
-        public static void InitDb(WebApplication app)
+        public static async Task InitDb(WebApplication app)
         {
             using var scope = app.Services.CreateScope(); //with using statement, no need to take care of the garbage collection -> clean up unused resources
 
@@ -16,13 +16,13 @@ namespace API.Data
 
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>()
                 ?? throw new InvalidOperationException("Failed to retrieve User Manager");
-                SeedData(context, userManager).Wait();
+                await SeedData(context, userManager);
 
         }
         
         private static async Task SeedData(StoreContext context, UserManager<User> userManager)
         {
-            context.Database.Migrate();
+            //context.Database.Migrate();
 
             if (!userManager.Users.Any())
             {
@@ -243,6 +243,12 @@ namespace API.Data
                     QuantityInStock = 100
                 }
             };
+            context.Products.AddRange(products);
+            foreach (var product in products)
+            {
+                context.Products.Add(product);
+            }
+            context.SaveChanges();
         }
         //  public static void Initialize(StoreContext context)
         //  {
@@ -254,10 +260,10 @@ namespace API.Data
         //     };
 
         //     context.Products.AddRange(products);
-        //     // foreach (var product in products)
-        //     // {
-        //     //     context.Products.Add(product);
-        //     // }
+        //     foreach (var product in products)
+        //     {
+        //         context.Products.Add(product);
+        //     }
         //     context.SaveChanges();
         //  }
     }

@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { ProductParams } from "../../app/models/productParams";
-import { catalogApi } from "./CatalogApi";
 
 const initialState: ProductParams = {
     pageNumber: 1,

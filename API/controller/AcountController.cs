@@ -63,14 +63,14 @@ namespace API.controller
                     var cookieOptions = new CookieOptions
                     {
                         HttpOnly = true,
-                        Secure = false, // Set to true if using HTTPS
+                        Secure = true, // Set to true if using HTTPS
                         SameSite = SameSiteMode.None // Adjust as needed
                     };
                     //Response.Cookies.Append(".AspNetCore.Identity.Application", protectedTicket, cookieOptions);
 
                     return Ok(new { message = "Login successful" });
                 }
-                return Unauthorized("Invalid login attempt.");
+                return Unauthorized(new { message = "Login failed" });
             }
             catch (Exception ex)
             {

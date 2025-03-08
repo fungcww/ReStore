@@ -1,4 +1,4 @@
-import { border, borderRadius, Box, fontSize, Grid, height, width } from "@mui/system"
+import { Box } from "@mui/system"
 import { Item } from "../../app/models/basket"
 import { Grid2, IconButton, Paper, Typography } from "@mui/material"
 import { Add, Close, Remove } from "@mui/icons-material"

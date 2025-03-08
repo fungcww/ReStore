@@ -1,5 +1,4 @@
 import { Box , Button, Paper, Typography } from "@mui/material";
-import { useFetchFiltersQuery } from "./CatalogApi"
 import Search from "./Search";
 import RadioButtonGroup from "../../app/shared/components/RadioButtonGroup";
 import { useAppDispatch, useAppSelector } from "../../app/store/store";

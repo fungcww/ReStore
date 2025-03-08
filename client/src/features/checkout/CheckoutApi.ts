@@ -24,7 +24,7 @@ export const checkoutApi = createApi({
                             //paymentIntendId shoud not be included on client side
                         })
                     )
-                }catch (error) {
+                }catch {
                 console.log('creating payment intent')}
             }
         })

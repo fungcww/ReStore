@@ -1,6 +1,5 @@
 import { Box, Pagination, Typography } from "@mui/material";
 import { Pagination as PaginationType } from "../../models/pagination";
-import App from "../../layout/App";
 
 type Props = {
     metadata: PaginationType
