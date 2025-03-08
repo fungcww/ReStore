@@ -49,32 +49,32 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapGroup("api").MapIdentityApi<User>();
-//app.MapFallbackToController("Index", "Fallback");
+app.MapFallbackToController("Index", "Fallback");
 
 await DbInitializer.InitDb(app);
 
-if (app.Environment.IsDevelopment())
-{
-    //app.UseSwagger();
-    //app.UseSwaggerUI();
-    //app.UseAuthorization();
-    //app.MapControllers();
+// if (app.Environment.IsDevelopment())
+// {
+//     //app.UseSwagger();
+//     //app.UseSwaggerUI();
+//     //app.UseAuthorization();
+//     //app.MapControllers();
 
+// //app.UseHttpsRedirection();
+// var scope = app.Services.CreateScope();
+// var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
+// var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+// // try
+// // {
+// //     context.Database.Migrate();
+// //     DbInitializer.Initialize(context);
+// // }
+// // catch(Exception ex)
+// // {
+// //     logger.LogError(ex, "Error in your face ~ ");
+// // }
+// //app.Run();
+// }
 //app.UseHttpsRedirection();
-var scope = app.Services.CreateScope();
-var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
-var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-// try
-// {
-//     context.Database.Migrate();
-//     DbInitializer.Initialize(context);
-// }
-// catch(Exception ex)
-// {
-//     logger.LogError(ex, "Error in your face ~ ");
-// }
-//app.Run();
-}
-app.UseHttpsRedirection();
-app.UseCookiePolicy();
+//app.UseCookiePolicy();
 app.Run();
