@@ -22,7 +22,7 @@ namespace API.Data
         
         private static async Task SeedData(StoreContext context, UserManager<User> userManager)
         {
-            //context.Database.Migrate();
+            context.Database.Migrate();
 
             if (!userManager.Users.Any())
             {
