@@ -15,8 +15,8 @@ builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<StoreContext>(opt => 
 {
-    //opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection_UAT"));
+    //opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddCors();
 builder.Services.AddTransient<ExceptionMiddleware>();
