@@ -16,23 +16,25 @@ using Stripe.Tax;
 
 namespace API.controller
 {
-    [Authorize]
+    //[Authorize]
     public class OrdersController(StoreContext context) : BaseApiController
     {
         [HttpGet]
-        public async Task<ActionResult<List<Order>>> GetOrders()
+        public async Task<ActionResult<List<OrderDto>>> GetOrders()
         {
             var orders = await context.Orders
-                .Include(x => x.OrderItems)
+                //.Include(x => x.OrderItems)
+                .ProjectToDto()
                 .Where(x => x.BuyerEmail == User.GetUsername())
                 .ToListAsync();
 
             return orders;
         }
-        [HttpGet("id:int")]
-        public async Task<ActionResult<Order>> GetOrderDetails(int id)
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<OrderDto>> GetOrderDetails(int id)
         {
             var order = await context.Orders
+                .ProjectToDto()
                 .Where(x => x.BuyerEmail == User.GetUsername() && id == x.Id)
                 .FirstOrDefaultAsync();
 
@@ -43,9 +45,9 @@ namespace API.controller
         [HttpPost]
         public async Task<ActionResult<Order>> CreateOrder(CreateOrderDto orderDto)
         {
-            var basket = await context.Baskets.GetBasketWithItems(Request.Cookies["basketId"]);
+            var basket = await context.Baskets.GetBasketWithItems(Request.Cookies["buyerId"]);
 
-            if(basket == null || basket.Items.Count == 0)
+            if(basket == null || basket.Items.Count == 0 || string.IsNullOrEmpty(basket.PaymentIntentId))
                 return BadRequest("Basket is empty or not found");
             
             var items = CreateOrderItems(basket.Items);
@@ -54,25 +56,37 @@ namespace API.controller
             var subtotal = items.Sum(x => x.Price * x.Quantity);
             var deliveryFee = CalculateDeliveryFee(subtotal);
 
-            var order = new Order
+            var order = await context.Orders
+                .Include(x => x.OrderItems)
+                .FirstOrDefaultAsync(x => x.PaymentIntentId == basket.PaymentIntentId);
+
+            if(order == null)
             {
-                OrderItems = items,
-                BuyerEmail = User.GetUsername(),
-                ShippingAddress = orderDto.ShippingAddress,
-                DeliveryFee = deliveryFee,
-                Subtotal = subtotal,
-                PaymentSummary = orderDto.PaymentSummary,
-                PaymentIntentId = basket.PaymentIntentId
-            };
-            context.Orders.Add(order);
-            context.Baskets.Remove(basket);
-            Response.Cookies.Delete("basketId");
+                order = new Order
+                {
+                    OrderItems = items,
+                    BuyerEmail = User.GetUsername(),
+                    ShippingAddress = orderDto.ShippingAddress,
+                    DeliveryFee = deliveryFee,
+                    Subtotal = subtotal,
+                    PaymentSummary = orderDto.PaymentSummary,
+                    PaymentIntentId = basket.PaymentIntentId
+                };
+                context.Orders.Add(order);
+            }
+            else
+            {
+                order.OrderItems = items;//**prevent hacker action, update newly added order items
+            }
+            
+            //context.Baskets.Remove(basket);
+            //Response.Cookies.Delete("buyerId");
 
             var result = await context.SaveChangesAsync() > 0;
 
             if(!result) return BadRequest("Problem creating order");
 
-            return CreatedAtAction(nameof(GetOrderDetails), new{id = order.Id}, order);
+            return CreatedAtAction(nameof(GetOrderDetails), new{id = order.Id}, order.ToDto());
             //return response is typically used when a new resource has been successfully created.
             //return status 201 to browser
         }
@@ -93,7 +107,7 @@ namespace API.controller
                 }
                 OrderItem orderItem = new OrderItem
                 {
-                    itemOrdered = new ProductItemOrdered
+                    ItemOrdered = new ProductItemOrdered
                     {
                         ProductId = item.ProductId,
                         PictureUrl = item.Product.PictureUrl,

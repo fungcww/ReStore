@@ -4,6 +4,7 @@ namespace API.Entities.OrderAggregate
     {
         Pending,
         PaymentReceived,
-        PaymentFailed
+        PaymentFailed,
+        PaymentMismatch
     }
 }

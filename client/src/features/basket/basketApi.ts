@@ -87,7 +87,8 @@ export const basketApi = createApi({
             onQueryStarted: async (_, {dispatch}) => {
                 dispatch(
                     basketApi.util.updateQueryData('fetchBasket', undefined, (draft) => {
-                        draft.items = []
+                        draft.items = [];
+                        draft.buyerId = ''; //clear buyerId?
                     })
                 );
                 Cookies.remove('buyerId')
